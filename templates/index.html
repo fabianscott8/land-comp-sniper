@@ -1,1 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Land Comp Sniper</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f4; color: #333; }
+        h1 { color: #000; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #444; color: white; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+        .btn { background: black; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Land Comp Sniper 🏹</h1>
+    <form method="POST">
+        <label>Enter Address or ZIP Code:</label><br>
+        <input type="text" name="address" required style="width: 100%; padding: 10px;"><br><br>
+        <button type="submit" class="btn">Fetch Comps</button>
+    </form>
 
+    {% if comps %}
+    <h2>📊 Comps & Offer Suggestions</h2>
+    <p><strong>Avg Price per Acre:</strong> ${{ avg_price_per_acre }}</p>
+    <p><strong>Target Offer Range:</strong> ${{ target_offer_low }} - ${{ target_offer_high }}</p>
+    <p><strong>Target Wholesale Profit:</strong> ${{ profit_target }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Address</th>
+                <th>Acres</th>
+                <th>Sold Price</th>
+                <th>Sold Date</th>
+                <th>Price per Acre</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for comp in comps %}
+            <tr>
+                <td>{{ comp['Address'] }}</td>
+                <td>{{ comp['Acres'] }}</td>
+                <td>${{ comp['Sold Price'] }}</td>
+                <td>{{ comp['Sold Date'] }}</td>
+                <td>${{ '%.2f' | format(comp['Sold Price'] / comp['Acres']) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <form method="POST" action="/download">
+        <button class="btn" type="submit">Download as Excel</button>
+    </form>
+    {% endif %}
+</div>
+</body>
+</html>
