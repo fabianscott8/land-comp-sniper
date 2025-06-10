@@ -10,17 +10,22 @@
         th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
         th { background-color: #444; color: white; }
         .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
-        .btn { background: black; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn { background: black; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; }
+        .message { margin-top: 20px; padding: 10px; border-radius: 5px; background-color: #e7f3fe; border: 1px solid #cce5ff; color: #004085; }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Land Comp Sniper 🏹</h1>
     <form method="POST">
-        <label>Enter Address or ZIP Code:</label><br>
+        <label>Enter Address or ZIP Code (e.g., "8770 Bensville Rd, Waldorf, MD 20603" or "20603"):</label><br>
         <input type="text" name="address" required style="width: 100%; padding: 10px;"><br><br>
         <button type="submit" class="btn">Fetch Comps</button>
     </form>
+
+    {% if message %}
+        <div class="message">{{ message }}</div>
+    {% endif %}
 
     {% if comps %}
     <h2>📊 Comps & Offer Suggestions</h2>
@@ -43,15 +48,16 @@
             <tr>
                 <td>{{ comp['Address'] }}</td>
                 <td>{{ comp['Acres'] }}</td>
-                <td>${{ comp['Sold Price'] }}</td>
+                <td>${{ '%.2f' | format(comp['Sold Price']) }}</td>
                 <td>{{ comp['Sold Date'] }}</td>
-                <td>${{ '%.2f' | format(comp['Sold Price'] / comp['Acres']) }}</td>
+                <td>${{ '%.2f' | format(comp['Price per Acre']) }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
     <form method="POST" action="/download">
+        <input type="hidden" name="comps_json" value="{{ comps | tojson }}">
         <button class="btn" type="submit">Download as Excel</button>
     </form>
     {% endif %}
